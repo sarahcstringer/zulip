@@ -65,12 +65,12 @@ exports.toggle_email_change_display = function () {
     $(".change_email_tooltip").toggle();
 };
 
-exports.update_realm_description = function (description) {
+exports.update_realm_description = function () {
     if (!meta.loaded) {
         return;
     }
 
-    $('#id_realm_description').val(description);
+    $('#id_realm_description').val(page_params.realm_description);
 };
 
 exports.update_message_retention_days = function () {
@@ -79,6 +79,16 @@ exports.update_message_retention_days = function () {
     }
 
     $("#id_realm_message_retention_days").val(page_params.message_retention_days);
+};
+
+exports.update_create_stream_by_admins_only = function () {
+    if (!meta.loaded) {
+        return;
+    }
+
+    if (!page_params.is_admin) {
+        page_params.can_create_streams = !page_params.realm_create_stream_by_admins_only;
+    }
 };
 
 exports.populate_auth_methods = function (auth_methods) {
@@ -121,10 +131,13 @@ function maybe_get_stream_name(stream_id) {
     return stream.name;
 }
 
-exports.render_notifications_stream_ui = function (stream_id) {
+exports.render_notifications_stream_ui = function () {
+    if (!meta.loaded) {
+        return;
+    }
     var elem = $('#realm_notifications_stream_name');
 
-    var name = maybe_get_stream_name(stream_id);
+    var name = maybe_get_stream_name(page_params.realm_notifications_stream_id);
 
     if (!name) {
         elem.text(i18n.t("Disabled"));
